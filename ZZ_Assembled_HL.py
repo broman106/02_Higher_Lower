@@ -41,6 +41,13 @@ def intcheck(question, low=None, high=None):
             print(error)
             continue
 
+
+def statement_decorator(statement, decoration):
+    print(decoration * len(statement))
+    print(statement)
+    print(decoration * len(statement))
+    return ""
+
 # Main routine goes here
 
 # Get user input...
@@ -49,17 +56,75 @@ highest = intcheck("High Number: ", lowest + 1)
 rounds = intcheck("Rounds: ", 1)
 
 
-secret = random.randint(lowest, highest)
 
-guess = ""
 
-while guess != secret:
+# Start of game
+rounds_played = 0
+num_won = 0
+GUESSES_ALLOWED = 4
 
-    guess = intcheck("Guess: ", lowest, highest)
+# Empty list to hold game history
+history =[]
 
-    if guess < secret:
-        print("Too high, try a lower number")
-    elif guess > secret:
-        print("Too low, try a higher number")
-    else:
-        print("Well done! You guessed the secret number")
+# Start of round
+while rounds_played < rounds:
+    secret = random.randint(lowest, highest)
+    print(secret)
+
+    guess = ""
+    guesses_left = GUESSES_ALLOWED
+
+    print()
+
+    rounds_played += 1
+    print("Round {}".format(rounds_played ))
+
+    while guess != secret and guesses_left >= 1:
+
+        guess = intcheck("guess: ", lowest, highest)  # replace this with function call in due count
+        guesses_left -= 1
+
+        if guesses_left >= 1:
+
+            if guess > secret:
+                feedback = "too high, try a lower number. guesses left: {}".format(guesses_left)
+                statement_decorator(feedback, "v")
+
+            elif guess < secret:
+                feedback = "too low, try a higher number. guesses left: {}".format(guesses_left)
+                statement_decorator(feedback, "^")
+            else:
+                if guess > secret:
+                    statement_decorator("too high!", "v")
+                elif guess < secret:
+                    statement_decorator("too low!", "^")
+
+                # Add result to game history list
+                    history.append("Round {}: Lost".format(rounds_played))
+
+            if guess == secret:
+                if guesses_left ==GUESSES_ALLOWED - 1:
+                    print("****mean as ko! you got it in one guess my g****")
+                else:
+                    print("well done my bro, you got it in {} guesses".format(GUESSES_ALLOWED - guesses_left))
+                    guesses_left -= 1 # penalty point for losing
+
+                history.append("Round {}: Won".format(rounds_played))
+
+                # update number won
+                num_won += 1
+
+print()
+print("****** Game Stats ******")
+print("Games Won: {}".format(num_won))
+print("Games Lost: {}".format(rounds_played - num_won))
+print("Games Played: {}".format(rounds_played))
+print()
+
+print("***** Game History ******")
+
+for item in history:
+    print(item)
+
+print()
+statement_decorator("We are done", "!")
